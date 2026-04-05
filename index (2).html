@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pratik Digital World — Marketing Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ════════════════════════════════════════
+       ROOT & RESET
+    ════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0f0f13;
+      --bg2:        #16161e;
+      --card:       #1c1c26;
+      --card2:      #22222e;
+      --border:     rgba(255,255,255,.08);
+      --accent:     #e8a045;
+      --accent2:    #c9541e;
+      --green:      #3ecf8e;
+      --text:       #eeeef0;
+      --text-muted: #888;
+      --input-bg:   rgba(255,255,255,.05);
+      --radius:     16px;
+      --shadow:     0 8px 32px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    .noise {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 999; opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ════════════════════════════════════════
+       HEADER
+    ════════════════════════════════════════ */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,15,19,.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1160px; margin: 0 auto;
+      padding: .9rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .logo { display: flex; align-items: center; gap: .75rem; text-decoration: none; }
+    .logo-icon { width: 40px; height: 40px; flex-shrink: 0; }
+    .logo-icon svg { width: 100%; height: 100%; }
+    .logo-name {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--text); line-height: 1.1; letter-spacing: .01em;
+    }
+    .logo-tag {
+      display: block; font-size: .7rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+    }
+    .greeting-badge {
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 99px; padding: .4rem 1rem;
+      font-size: .85rem; font-weight: 500; color: var(--text-muted); white-space: nowrap;
+    }
+    .greeting-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(62,207,142,.2);
+      animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(62,207,142,.2); }
+      50%      { box-shadow: 0 0 0 6px rgba(62,207,142,.08); }
+    }
+
+    /* ════════════════════════════════════════
+       HERO
+    ════════════════════════════════════════ */
+    .hero {
+      max-width: 1160px; margin: 0 auto;
+      padding: 4rem 2rem 3rem;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 2.5rem;
+    }
+    .hero-content { flex: 1 1 340px; }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700;
+      line-height: 1.15; color: var(--text); margin-bottom: 1rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub { font-size: 1rem; color: var(--text-muted); max-width: 480px; line-height: 1.7; }
+
+    .hero-stats { flex: 1 1 300px; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .stat-card {
+      flex: 1 1 80px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1rem;
+      text-align: center; box-shadow: var(--shadow); transition: transform .2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: .3rem;
+    }
+    .stat-lbl {
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ════════════════════════════════════════
+       MAIN LAYOUT
+    ════════════════════════════════════════ */
+    .main-wrap {
+      max-width: 1160px; margin: 0 auto;
+      padding: 0 2rem 5rem;
+      display: flex; flex-direction: column; gap: 3rem;
+    }
+    .section-eyebrow {
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: .5rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 700;
+      color: var(--text); margin-bottom: 1.25rem; line-height: 1.2;
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ════════════════════════════════════════
+       COMPOSE CARD
+    ════════════════════════════════════════ */
+    .compose-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow);
+    }
+    .compose-inner { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .msg-textarea {
+      flex: 1 1 260px; min-height: 100px; resize: vertical;
+      background: var(--input-bg); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: .85rem 1rem;
+      color: var(--text); font-family: 'Outfit', sans-serif; font-size: .95rem;
+      outline: none; transition: border-color .2s; line-height: 1.6;
+    }
+    .msg-textarea:focus { border-color: var(--accent); }
+    .msg-textarea::placeholder { color: var(--text-muted); }
+
+    .btn-set {
+      align-self: flex-end;
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.6rem; border-radius: 99px; border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-family: 'Outfit', sans-serif;
+      font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: opacity .2s, transform .15s; white-space: nowrap;
+    }
+    .btn-set:hover { opacity: .88; transform: translateY(-1px); }
+
+    .msg-preview {
+      display: flex; align-items: flex-start; gap: .75rem;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.25rem;
+      font-size: .9rem; color: var(--text-muted); line-height: 1.6;
+    }
+    .preview-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: .05rem; }
+
+    /* ════════════════════════════════════════
+       ADD CONTACT SECTION
+    ════════════════════════════════════════ */
+    .add-contact-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; }
+
+    .tab-btn {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .55rem 1.25rem; border-radius: 99px;
+      border: 1.5px solid var(--border); background: transparent;
+      color: var(--text-muted); font-family: 'Outfit', sans-serif;
+      font-size: .85rem; font-weight: 500; cursor: pointer; transition: all .2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent); color: #fff; border-color: transparent;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .contact-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label {
+      font-size: .8rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .form-input {
+      padding: .7rem 1rem; border-radius: 10px;
+      border: 1.5px solid var(--border); background: var(--input-bg);
+      color: var(--text); font-family: 'Outfit', sans-serif;
+      font-size: .95rem; outline: none; transition: border-color .2s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .btn-add-contact {
+      margin-top: 1.25rem;
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.8rem; border-radius: 99px; border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-family: 'Outfit', sans-serif;
+      font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: opacity .2s, transform .15s;
+    }
+    .btn-add-contact:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 2px dashed var(--accent); border-radius: 14px;
+      padding: 2.5rem 2rem; text-align: center;
+      background: rgba(255,255,255,.03); cursor: pointer;
+      transition: background .2s; position: relative;
+    }
+    .upload-zone:hover { background: rgba(232,160,69,.07); }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 2.5rem; margin-bottom: .6rem; }
+    .upload-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: .3rem; }
+    .upload-hint { font-size: .82rem; color: var(--text-muted); }
+    .upload-hint strong { color: var(--accent); }
+
+    .upload-preview {
+      margin-top: 1rem; padding: .8rem 1rem; border-radius: 10px;
+      background: rgba(232,160,69,.1); border: 1px solid rgba(232,160,69,.25);
+      font-size: .88rem; color: var(--text);
+      display: none; align-items: center; gap: .6rem;
+    }
+    .upload-preview.visible { display: flex; }
+
+    .btn-import {
+      margin-top: 1.1rem; align-items: center; gap: .5rem;
+      padding: .7rem 1.8rem; border-radius: 99px; border: none;
+      background: linear-gradient(135deg, #3ecf8e, #1a9a64);
+      color: #fff; font-family: 'Outfit', sans-serif;
+      font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: opacity .2s, transform .15s; display: none;
+    }
+    .btn-import.visible { display: inline-flex; }
+    .btn-import:hover { opacity: .88; transform: translateY(-1px); }
+
+    .excel-note { margin-top: 1rem; font-size: .8rem; color: var(--text-muted); line-height: 1.6; }
+    .excel-note code {
+      background: rgba(255,255,255,.08); padding: .1rem .4rem;
+      border-radius: 4px; font-size: .78rem;
+    }
+
+    /* ════════════════════════════════════════
+       TABLE SECTION
+    ════════════════════════════════════════ */
+    .table-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .search-wrap { position: relative; display: flex; align-items: center; }
+    .search-icon { position: absolute; left: .85rem; color: var(--text-muted); pointer-events: none; }
+    .search-input {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 99px; padding: .5rem 1rem .5rem 2.4rem;
+      color: var(--text); font-family: 'Outfit', sans-serif;
+      font-size: .88rem; outline: none; transition: border-color .2s; width: 220px;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .table-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+    }
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    thead tr { background: var(--card2); border-bottom: 1px solid var(--border); }
+    th {
+      padding: .9rem 1.2rem; text-align: left;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-muted); white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.03); }
+    td { padding: .85rem 1.2rem; vertical-align: middle; color: var(--text); }
+
+    .loading-row {
+      text-align: center; color: var(--text-muted);
+      padding: 2.5rem !important;
+    }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite; display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-send {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .45rem 1rem; border-radius: 99px;
+      border: 1.5px solid var(--green); background: transparent;
+      color: var(--green); font-family: 'Outfit', sans-serif;
+      font-size: .82rem; font-weight: 600;
+      cursor: pointer; transition: background .18s, color .18s; white-space: nowrap;
+    }
+    .btn-send:hover { background: var(--green); color: #fff; }
+    .btn-send:disabled { opacity: .35; cursor: not-allowed; }
+
+    .badge {
+      display: inline-block; padding: .25rem .75rem; border-radius: 99px;
+      font-size: .75rem; font-weight: 600; letter-spacing: .04em;
+    }
+    .badge-pending { background: rgba(255,255,255,.07); color: var(--text-muted); }
+    .badge-sent    { background: rgba(62,207,142,.15);  color: var(--green); }
+    .badge-failed  { background: rgba(239,68,68,.15);   color: #f87171; }
+
+    /* ════════════════════════════════════════
+       FOOTER & TOAST
+    ════════════════════════════════════════ */
+    .site-footer {
+      border-top: 1px solid var(--border); text-align: center;
+      padding: 1.5rem 2rem; font-size: .82rem; color: var(--text-muted);
+    }
+    .site-footer strong { color: var(--accent); }
+
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: .85rem 1.4rem;
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .9rem; color: var(--text);
+      box-shadow: 0 12px 40px rgba(0,0,0,.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+      z-index: 500; max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .header-inner { padding: .8rem 1.2rem; }
+      .hero { padding: 2.5rem 1.2rem 2rem; }
+      .main-wrap { padding: 0 1.2rem 4rem; }
+      .greeting-badge { display: none; }
+      .contact-form-grid { grid-template-columns: 1fr; }
+      .table-topbar { flex-direction: column; align-items: flex-start; }
+      .search-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NOISE -->
+  <div class="noise"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="20" fill="url(#lg)"/>
+            <text x="20" y="27" text-anchor="middle" font-size="18">📣</text>
+            <defs>
+              <linearGradient id="lg" x1="0" y1="0" x2="40" y2="40">
+                <stop stop-color="#e8a045"/><stop offset="1" stop-color="#c9541e"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <span class="logo-name">Pratik Digital World</span>
+          <span class="logo-tag">Marketing Dashboard</span>
+        </div>
+      </div>
+      <div class="greeting-badge">
+        <span class="greeting-dot"></span>
+        <span id="greetingText">Good Morning, Chhabra Sir 👋</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Reach Every Guest.<br /><em>Make Every Message Count.</em></h1>
+      <p class="hero-sub">Broadcast personalised WhatsApp messages to your loyal customers, track every send, and grow your business — all from one dashboard.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total Contacts</div></div>
+      <div class="stat-card"><div class="stat-num" id="statReached">0</div><div class="stat-lbl">Reached</div></div>
+      <div class="stat-card"><div class="stat-num" id="statMsgs">0</div><div class="stat-lbl">Msgs Sent</div></div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="main-wrap">
+
+    <!-- STEP 1: COMPOSE -->
+    <section class="compose-section reveal">
+      <div class="section-eyebrow">✦ Step 1</div>
+      <h2 class="section-title">Compose Broadcast</h2>
+      <div class="compose-card">
+        <div class="compose-inner">
+          <textarea id="msgInput" class="msg-textarea" placeholder="Type your message here… e.g. 🎉 Exclusive 20% OFF this weekend! Contact Pratik Digital World — because you deserve the best results! 🚀✨"></textarea>
+          <button class="btn-set" onclick="setMessage()">
+            <span>Lock Message</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div class="msg-preview" id="msgPreview">
+          <div class="preview-icon">💬</div>
+          <span id="previewText">No message set yet. Type above and lock it in.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: ADD CONTACT -->
+    <section class="reveal">
+      <div class="section-eyebrow">✦ Step 2</div>
+      <h2 class="section-title">Add Contact</h2>
+      <div class="compose-card">
+
+        <div class="add-contact-tabs">
+          <button class="tab-btn active" onclick="switchTab('form', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Add Manually
+          </button>
+          <button class="tab-btn" onclick="switchTab('excel', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Upload Excel / CSV
+          </button>
+        </div>
+
+        <!-- Manual Form -->
+        <div class="tab-panel active" id="panel-form">
+          <div class="contact-form-grid">
+            <div class="form-group">
+              <label>Customer Name</label>
+              <input type="text" id="newName" class="form-input" placeholder="e.g. Rahul Sharma" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp Number</label>
+              <input type="tel" id="newPhone" class="form-input" placeholder="e.g. 9876543210" maxlength="15" />
+            </div>
+          </div>
+          <button class="btn-add-contact" onclick="addContactManually()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Add Contact
+          </button>
+        </div>
+
+        <!-- Excel Upload -->
+        <div class="tab-panel" id="panel-excel">
+          <div class="upload-zone">
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" onchange="handleFileSelect(this)" />
+            <div class="upload-icon">📊</div>
+            <div class="upload-title">Drag &amp; Drop your Excel / CSV file here</div>
+            <div class="upload-hint">or <strong>click to browse</strong> &nbsp;·&nbsp; Supports .xlsx, .xls, .csv</div>
+          </div>
+          <div class="upload-preview" id="uploadPreview">
+            <span>📄</span>
+            <span id="uploadFileName">No file selected</span>
+          </div>
+          <button class="btn-import" id="btnImport" onclick="importExcelContacts()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            Import Contacts
+          </button>
+          <p class="excel-note">
+            ℹ️ Your file must have columns named <code>Name</code> and <code>Phone</code> (or <code>WhatsApp</code> / <code>Mobile</code>).<br/>
+            Example row: &nbsp;<code>Rahul Sharma</code> &nbsp;|&nbsp; <code>9876543210</code>
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 3: SEND -->
+    <section class="table-section reveal">
+      <div class="section-eyebrow">✦ Step 3</div>
+      <div class="table-topbar">
+        <h2 class="section-title" style="margin-bottom:0">Send to Customers</h2>
+        <div class="search-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="search-input" type="text" id="searchInput" placeholder="Search customers…" oninput="filterTable()" />
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Customer Name</th><th>WhatsApp Number</th><th>Action</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr><td colspan="5" class="loading-row">No contacts yet — add some in Step 2!</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>© <span id="year"></span> <strong>Pratik Digital World</strong> · Manager Dashboard · Crafted with ❤️</p>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Done!</span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════ -->
+  <script>
+    /* ── STATE ── */
+    let customers = [
+      { name: 'Amit Sharma',   phone: '9823045671', status: 'pending' },
+      { name: 'Priya Patel',   phone: '9765432108', status: 'sent'    },
+      { name: 'Ravi Mehrotra', phone: '9012345678', status: 'pending' },
+    ];
+    let currentMessage    = '';
+    let pendingImportRows = [];
+
+    /* ── INIT ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Dynamic greeting
+      const h = new Date().getHours();
+      const greet = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+      document.getElementById('greetingText').textContent = greet + ', Chhabra Sir 👋';
+
+      // Scroll reveal
+      const obs = new IntersectionObserver(
+        entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+        { threshold: 0.1 }
+      );
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+      renderTable();
+      updateStats();
+    });
+
+    /* ── COMPOSE ── */
+    function setMessage() {
+      const val = document.getElementById('msgInput').value.trim();
+      if (!val) { showToast('⚠️', 'Please type a message first.'); return; }
+      currentMessage = val;
+      document.getElementById('previewText').textContent = currentMessage;
+      document.getElementById('previewText').style.color = 'var(--text)';
+      showToast('✅', 'Message locked in!');
+    }
+
+    /* ── RENDER TABLE ── */
+    function renderTable(list) {
+      const body = document.getElementById('tableBody');
+      const data = list !== undefined ? list : customers;
+
+      if (!data.length) {
+        body.innerHTML = `<tr><td colspan="5" class="loading-row">No contacts yet — add some in Step 2!</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = data.map((c, i) => {
+        const realIdx    = customers.indexOf(c);
+        const badgeClass = c.status === 'sent' ? 'badge-sent' : c.status === 'failed' ? 'badge-failed' : 'badge-pending';
+        const badgeLabel = c.status === 'sent' ? '✓ Sent' : c.status === 'failed' ? '✗ Failed' : 'Pending';
+        const disabled   = c.status === 'sent' ? 'disabled' : '';
+        return `
+          <tr>
+            <td style="color:var(--text-muted);font-size:.82rem">${i + 1}</td>
+            <td style="font-weight:500">${esc(c.name)}</td>
+            <td style="font-family:monospace;font-size:.88rem;color:var(--text-muted)">+91 ${esc(c.phone)}</td>
+            <td>
+              <button class="btn-send" onclick="sendMsg(${realIdx})" ${disabled}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+                ${c.status === 'sent' ? 'Sent' : 'Send'}
+              </button>
+            </td>
+            <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+          </tr>`;
+      }).join('');
+    }
+
+    /* ── SEARCH ── */
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      renderTable(customers.filter(c =>
+        c.name.toLowerCase().includes(q) || c.phone.includes(q)
+      ));
+    }
+
+    /* ── SEND VIA WHATSAPP ── */
+    function sendMsg(idx) {
+      if (!currentMessage) { showToast('⚠️', 'Lock a message in Step 1 first.'); return; }
+      const c = customers[idx]; if (!c) return;
+      const url = `https://wa.me/91${c.phone.replace(/\D/g,'')}?text=${encodeURIComponent(currentMessage)}`;
+      window.open(url, '_blank');
+      customers[idx].status = 'sent';
+      renderTable(); updateStats(); filterTable();
+      showToast('✅', `Message opened for ${c.name}!`);
+    }
+
+    /* ── STATS ── */
+    function updateStats() {
+      const sent = customers.filter(c => c.status === 'sent').length;
+      document.getElementById('statTotal').textContent   = customers.length;
+      document.getElementById('statReached').textContent = sent;
+      document.getElementById('statMsgs').textContent    = sent;
+    }
+
+    /* ── TAB SWITCHER ── */
+    function switchTab(panel, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + panel).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    /* ── ADD MANUALLY ── */
+    function addContactManually() {
+      const name  = document.getElementById('newName').value.trim();
+      const phone = document.getElementById('newPhone').value.trim().replace(/\D/g, '');
+      if (!name || !phone)         { showToast('⚠️', 'Please fill in both Name and Phone.'); return; }
+      if (!/^\d{7,15}$/.test(phone)) { showToast('⚠️', 'Enter a valid number (7–15 digits).'); return; }
+      customers.push({ name, phone, status: 'pending' });
+      renderTable(); updateStats();
+      document.getElementById('newName').value  = '';
+      document.getElementById('newPhone').value = '';
+      showToast('✅', `"${name}" added!`);
+    }
+
+    /* ── FILE SELECT ── */
+    function handleFileSelect(input) {
+      const file = input.files[0]; if (!file) return;
+      document.getElementById('uploadFileName').textContent =
+        file.name + '  ·  ' + (file.size / 1024).toFixed(1) + ' KB';
+      document.getElementById('uploadPreview').classList.add('visible');
+      document.getElementById('btnImport').classList.add('visible');
+      pendingImportRows = [];
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        pendingImportRows = parseCSV(e.target.result);
+        if (pendingImportRows.length)
+          showToast('📊', pendingImportRows.length + ' contacts ready to import.');
+        else
+          showToast('❌', 'No valid contacts found. Check column names.');
+      };
+      reader.readAsText(file);
+    }
+
+    /* ── PARSE CSV ── */
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) return [];
+      const headers  = lines[0].split(/[,;|\t]/).map(h => h.trim().toLowerCase().replace(/[^a-z]/g,''));
+      const nameIdx  = headers.findIndex(h => h.includes('name'));
+      const phoneIdx = headers.findIndex(h => h.includes('phone')||h.includes('whatsapp')||h.includes('mobile')||h.includes('number'));
+      if (nameIdx < 0 || phoneIdx < 0) return [];
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols  = lines[i].split(/[,;|\t]/);
+        const name  = (cols[nameIdx]  || '').trim();
+        const phone = (cols[phoneIdx] || '').trim().replace(/\D/g,'');
+        if (name && phone) rows.push({ name, phone, status: 'pending' });
+      }
+      return rows;
+    }
+
+    /* ── IMPORT ── */
+    function importExcelContacts() {
+      if (!pendingImportRows.length) { showToast('⚠️', 'No valid contacts to import.'); return; }
+      customers.push(...pendingImportRows);
+      renderTable(); updateStats();
+      showToast('✅', pendingImportRows.length + ' contacts imported!');
+      pendingImportRows = [];
+      document.getElementById('uploadPreview').classList.remove('visible');
+      document.getElementById('btnImport').classList.remove('visible');
+      document.getElementById('excelFileInput').value = '';
+    }
+
+    /* ── TOAST ── */
+    function showToast(icon, msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMsg').textContent  = msg;
+      t.classList.add('show');
+      clearTimeout(t._t);
+      t._t = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    /* ── ESCAPE HTML ── */
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
